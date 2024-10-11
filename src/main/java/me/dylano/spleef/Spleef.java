@@ -67,7 +67,8 @@ public class Spleef extends JavaPlugin implements Listener {
                 meta.addEnchant(Enchantment.DIG_SPEED, 5, true);
                 diamondShovel.setItemMeta(meta); // Stel de aangepaste metadata in
             }
-            p.getInventory().addItem(diamondShovel);        }
+            p.getInventory().addItem(diamondShovel);
+        }
         Bukkit.broadcastMessage("Spleef-spel gestart door " + player.getName() + "!");
     }
 
