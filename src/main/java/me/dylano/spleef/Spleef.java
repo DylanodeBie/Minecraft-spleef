@@ -10,6 +10,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,9 +60,14 @@ public class Spleef extends JavaPlugin implements Listener {
             p.teleport(Bukkit.getWorld("world").getSpawnLocation()); // Stel arena spawn in
             p.setGameMode(GameMode.SURVIVAL);
             p.getInventory().clear();
-            p.getInventory().addItem(new org.bukkit.inventory.ItemStack(Material.DIAMOND_SHOVEL));
-        }
-
+            ItemStack diamondShovel = new ItemStack(Material.DIAMOND_SHOVEL);
+            ItemMeta meta = diamondShovel.getItemMeta();
+            if (meta != null) {
+                // Voeg de Efficiency V enchantment toe
+                meta.addEnchant(Enchantment.DIG_SPEED, 5, true);
+                diamondShovel.setItemMeta(meta); // Stel de aangepaste metadata in
+            }
+            p.getInventory().addItem(diamondShovel);        }
         Bukkit.broadcastMessage("Spleef-spel gestart door " + player.getName() + "!");
     }
 
