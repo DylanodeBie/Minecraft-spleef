@@ -176,21 +176,28 @@ public class Spleef extends JavaPlugin implements Listener {
     public void onPlayerFall(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         if (gameRunning && spleefPlayers.contains(player)) {
-            if (player.getLocation().getY() < 10) {
+            if (player.getLocation().getY() < 10) { // Controleer of de speler is gevallen
                 spleefPlayers.remove(player);
                 player.setGameMode(GameMode.SPECTATOR);
                 Bukkit.broadcastMessage(ChatColor.RED + player.getName() + " is uitgeschakeld!");
 
+                // Controleer hoeveel spelers er over zijn
                 if (spleefPlayers.size() == 1) {
+                    // Er is nog één winnaar
                     Player winner = spleefPlayers.get(0);
                     scoreboard.onSpleefWin(winner);
                     launchFireworks(winner);
                     sendEndGameTitle(winner);
                     endGame();
+                } else if (spleefPlayers.isEmpty()) {
+                    // Niemand heeft gewonnen
+                    sendEndGameTitle(null); // Geen winnaar
+                    endGame();
                 }
             }
         }
     }
+
 
     // Methode voor vuurwerk
     private void launchFireworks(Player player) {
