@@ -5,3 +5,7 @@ api-version: '1.20'
 commands:
   startspleef:
     description: Start een Spleef-wedstrijd.
+  joinspleef:
+    description: Join een Spleef-wedstrijd.
+  gamemode:
+    description: Verander je game mode. Gebruik /gamemode survival of /gamemode creative.

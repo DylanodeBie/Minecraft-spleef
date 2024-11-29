@@ -1,9 +1,8 @@
 package me.dylano.spleef;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
@@ -13,56 +12,60 @@ import org.bukkit.scoreboard.ScoreboardManager;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Scorboard extends JavaPlugin {
+public class Scorboard {
 
     // HashMap om scores bij te houden voor elke speler
     private Map<Player, Integer> playerScores = new HashMap<>();
+    private Scoreboard board; // Scoreboard instance
+    private Objective objective; // Objective instance voor het scoreboard
 
-    @Override
-    public void onEnable() {
-        // Start het scoreboard wanneer de plugin wordt ingeschakeld
-        createScoreboard();
+    public Scorboard() {
+        // Maak het scoreboard aan bij initialisatie
+        ScoreboardManager manager = Bukkit.getScoreboardManager();
+        this.board = manager.getNewScoreboard();
+
+        // Maak een doelstelling voor de scores
+        objective = board.registerNewObjective("Wins", "dummy", ChatColor.GOLD + "Spleef Wins");
+        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
     }
 
-    // Methode om het scoreboard aan te maken en up-to-date te houden
-    public void createScoreboard() {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                // Scoreboard manager ophalen
-                ScoreboardManager manager = Bukkit.getScoreboardManager();
-                Scoreboard board = manager.getNewScoreboard();
+    // Methode om het scoreboard aan een speler toe te wijzen
+    public void setPlayerScoreboard(Player player) {
+        player.setScoreboard(board);
+    }
 
-                // Maak een doelstelling voor de scores
-                Objective objective = board.registerNewObjective("Wins", "dummy", ChatColor.GOLD + "Spleef Wins");
-                objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+    // Methode om de scores bij te werken
+    public void updateScoreboard() {
+        // Loop door de playerScores om de scores bij te werken op het scoreboard
+        for (Map.Entry<Player, Integer> entry : playerScores.entrySet()) {
+            Player player = entry.getKey();
+            int score = entry.getValue();
 
-                // Loop door alle online spelers om hun score te updaten
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    // Haal de score van de speler op uit de HashMap, of stel het in op 0 als het niet bestaat
-                    int score = playerScores.getOrDefault(player, 0);
-                    Score scoreboardScore = objective.getScore(player.getName());
-                    scoreboardScore.setScore(score); // Stel de score in
-                    player.setScoreboard(board); // Koppel het scoreboard aan de speler
-                }
-            }
-        }.runTaskTimer(this, 0L, 20L); // Update het scoreboard elke seconde
+            // Zorg ervoor dat de score voor de speler in het scoreboard bestaat
+            Score scoreboardScore = objective.getScore(player.getName());
+            scoreboardScore.setScore(score); // Stel de score in
+        }
     }
 
     // Methode om de score van een speler te verhogen
     public void addWin(Player player) {
         // Verhoog de score van de speler in de HashMap
-        int currentScore = playerScores.getOrDefault(player, 0);
-        playerScores.put(player, currentScore + 1);
+        int currentScore = playerScores.getOrDefault(player, 0) + 1;
+        playerScores.put(player, currentScore);
+
+        // Update het scoreboard
+        updateScoreboard();
 
         // Informeer de speler over zijn winst
-        player.sendMessage(ChatColor.GREEN + "Je hebt gewonnen! Je totaal aantal punten is nu: " + (currentScore + 1));
+        player.sendMessage(ChatColor.GREEN + "Je hebt gewonnen! Je totaal aantal punten is nu: " + currentScore);
     }
 
-    // Event listener of command to trigger a win (example)
-    // Dit kun je aanpassen aan je spelmodus-logica
+    // Methode die wordt aangeroepen als een speler wint
     public void onSpleefWin(Player winner) {
         // Voeg een winst toe aan de winnaar
         addWin(winner);
+
+        // Stuur een broadcast-bericht naar alle spelers
+        Bukkit.broadcastMessage(ChatColor.GOLD + winner.getName() + " heeft gewonnen het Spleef-spel!");
     }
 }
