@@ -198,7 +198,6 @@ public class Spleef extends JavaPlugin implements Listener {
         }
     }
 
-
     // Methode voor vuurwerk
     private void launchFireworks(Player player) {
         Firework firework = (Firework) player.getWorld().spawnEntity(player.getLocation(), EntityType.FIREWORK);
