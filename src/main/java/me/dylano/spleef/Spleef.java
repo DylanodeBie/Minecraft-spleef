@@ -225,17 +225,15 @@ public class Spleef extends JavaPlugin implements Listener {
         int baseZ = startLocation.getBlockZ();
 
         // Example parkour layout: creating a simple series of platforms
-        for (int i = 0; i < 5; i++) { // Change 5 to the number of platforms you want
+        for (int i = 0; i < 3; i++) { // Change 5 to the number of platforms you want
             // Create a platform of 3x3 blocks
             for (int x = -1; x <= 1; x++) {
                 for (int z = -1; z <= 1; z++) {
-                    world.getBlockAt(baseX + x, height + (i * 2), baseZ + z).setType(Material.STONE); // Change MATERIAL to the block you want
+                    world.getBlockAt(baseX + x, height + (i * 2), baseZ + z).setType(Material.SNOW_BLOCK); // Change MATERIAL to the block you want
                 }
             }
         }
     }
-
-
 
     private void endGame() {
         gameRunning = false;
