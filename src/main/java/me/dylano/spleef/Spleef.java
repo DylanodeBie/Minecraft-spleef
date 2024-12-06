@@ -176,7 +176,7 @@ public class Spleef extends JavaPlugin implements Listener {
     public void onPlayerFall(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         if (gameRunning && spleefPlayers.contains(player)) {
-            if (player.getLocation().getY() < 10) { // Controleer of de speler is gevallen
+            if (player.getLocation().getY() < 145) { // Controleer of de speler is gevallen
                 spleefPlayers.remove(player);
                 player.setGameMode(GameMode.SPECTATOR);
                 Bukkit.broadcastMessage(ChatColor.RED + player.getName() + " is uitgeschakeld!");
@@ -227,8 +227,8 @@ public class Spleef extends JavaPlugin implements Listener {
         // Example parkour layout: creating a simple series of platforms
         for (int i = 0; i < 3; i++) { // Change 5 to the number of platforms you want
             // Create a platform of 3x3 blocks
-            for (int x = -1; x <= 1; x++) {
-                for (int z = -1; z <= 1; z++) {
+            for (int x = -1; x <= 6; x++) {
+                for (int z = -1; z <= 6; z++) {
                     world.getBlockAt(baseX + x, height + (i * 2), baseZ + z).setType(Material.SNOW_BLOCK); // Change MATERIAL to the block you want
                 }
             }
