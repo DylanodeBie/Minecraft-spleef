@@ -78,12 +78,12 @@ public class Spleef extends JavaPlugin implements Listener {
         if (command.getName().equalsIgnoreCase("startspleef")) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-
+                // hier kan je een melding verwachten als het spel al is gestart
                 if (gameRunning) {
                     player.sendMessage(ChatColor.RED + "Het Spleef-spel is al gestart!");
                     return true;
                 }
-
+                // je moet met minimaal 2 spelers zijn om het spel te starten
                 if (spleefPlayers.size() < 2) {
                     player.sendMessage(ChatColor.RED + "Er zijn niet genoeg spelers om het spel te starten! Minimaal 2 spelers zijn nodig.");
                 } else {
@@ -93,7 +93,7 @@ public class Spleef extends JavaPlugin implements Listener {
             return true;
         }
 
-        // Add the new command for changing game modes
+        // hier kan je je game mode veranderen naar creativer en survival
         if (command.getName().equalsIgnoreCase("gamemode")) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
@@ -249,6 +249,6 @@ public class Spleef extends JavaPlugin implements Listener {
 
         spleefPlayers.clear(); // Wis de spelerslijst
         queueBossBar.setVisible(false); // Verberg de BossBar als het spel is afgelopen
-        Bukkit.broadcastMessage(ChatColor.GOLD + "Het Spleef-spel is beëindigd.");
+        Bukkit.broadcastMessage(ChatColor.GOLD + "Het Spleef-spel is beëindigd."); // Bericht dat het spel is afgelopen
     }
 }
