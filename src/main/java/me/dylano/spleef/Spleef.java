@@ -161,8 +161,9 @@ public class Spleef extends JavaPlugin implements Listener {
         }
 
         // Build the parkour structure at the defined starting location
+        resetArena(parkourStartLocation);
         buildParkour(parkourStartLocation);
-
+        
         Bukkit.broadcastMessage(ChatColor.GOLD + "Spleef-spel gestart door " + player.getName() + "!");
     }
 
@@ -217,6 +218,8 @@ public class Spleef extends JavaPlugin implements Listener {
         firework.setFireworkMeta(fireworkMeta);
         firework.detonate(); // Ontsteek het vuurwerk onmiddellijk
     }
+
+
 
     private void resetArena(Location startLocation) {
         World world = startLocation.getWorld();
