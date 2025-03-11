@@ -26,6 +26,7 @@ import java.util.List;
 public class Spleef extends JavaPlugin implements Listener {
 
     private List<Player> spleefPlayers = new ArrayList<>(); // Lijst van spelers in de spleef match
+    private List<Location> originalBlocks = new ArrayList<>();
     private boolean gameRunning = false; // Boolean om bij te houden of het spel al loopt
     private Scorboard scoreboard; // Scoreboard-object
     private BossBar queueBossBar; // BossBar voor de queue
@@ -215,6 +216,18 @@ public class Spleef extends JavaPlugin implements Listener {
         fireworkMeta.setPower(1); // Kracht van vuurwerk
         firework.setFireworkMeta(fireworkMeta);
         firework.detonate(); // Ontsteek het vuurwerk onmiddellijk
+    }
+
+    private void resetArena(Location startLocation) {
+        World world = startLocation.getWorld();
+        if (world == null) return;
+
+        // Reset alle opgeslagen blokken naar sneeuw
+        for (Location loc : originalBlocks) {
+            world.getBlockAt(loc).setType(Material.SNOW_BLOCK);
+        }
+
+        Bukkit.broadcastMessage(ChatColor.AQUA + "De spleef arena is opnieuw opgebouwd!");
     }
 
     private void buildParkour(Location startLocation) {
