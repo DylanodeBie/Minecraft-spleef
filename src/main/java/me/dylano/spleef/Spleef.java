@@ -58,6 +58,7 @@ public class Spleef extends JavaPlugin implements Listener {
                 if (gameRunning) {
                     player.sendMessage(ChatColor.RED + "Het Spleef-spel is al gestart. Je kunt niet meer meedoen.");
                 } else {
+                    // Voeg de speler toe aan de spleefPlayers-lijst als deze nog niet is toegevoegd
                     if (!spleefPlayers.contains(player)) {
                         spleefPlayers.add(player);
                         player.sendMessage(ChatColor.GREEN + "Je hebt je aangemeld voor het Spleef-spel!");
@@ -66,6 +67,7 @@ public class Spleef extends JavaPlugin implements Listener {
                         queueBossBar.addPlayer(player);
                         updateQueueBossBar();
                     } else {
+                        // hier krijg je een melding als je jezelf hebt aangemeld voor het spel
                         player.sendMessage(ChatColor.RED + "Je bent al aangemeld voor het Spleef-spel.");
                     }
                 }
