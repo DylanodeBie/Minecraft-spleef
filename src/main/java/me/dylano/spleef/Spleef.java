@@ -234,20 +234,30 @@ public class Spleef extends JavaPlugin implements Listener {
         World world = startLocation.getWorld();
         if (world == null) return;
 
-        // Use the coordinates of the starting location where the game starts
-        int height = startLocation.getBlockY(); // Use the height of the starting location
+        // Reset arena eerst
+        resetArena(startLocation);
+
+        int height = startLocation.getBlockY();
         int baseX = startLocation.getBlockX();
         int baseZ = startLocation.getBlockZ();
 
-        // Example parkour layout: creating a simple series of platforms
-        for (int i = 0; i < 3; i++) { // Change 5 to the number of platforms you want
-            // Create a platform of 3x3 blocks
-            for (int x = -1; x <= 6; x++) {
-                for (int z = -1; z <= 6; z++) {
-                    world.getBlockAt(baseX + x, height + (i * 2), baseZ + z).setType(Material.SNOW_BLOCK); // Change MATERIAL to the block you want
+        // Bouw de parkour opnieuw en sla bloklocaties op
+        for (int i = 0; i < 3; i++) {
+            for (int y = 0; y < 3; y++) {
+                for (int x = -3; x <= 3; x++) {
+                    for (int z = -3; z <= 3; z++) {
+                        Location blockLocation = new Location(world, baseX + x, height + (i * 6) + y, baseZ + z);
+                        world.getBlockAt(blockLocation).setType(Material.SNOW_BLOCK);
+                        // Sla de originele blokken op voor reset
+                        if (!originalBlocks.contains(blockLocation)) {
+                            originalBlocks.add(blockLocation);
+                        }
+                    }
                 }
             }
         }
+
+        Bukkit.broadcastMessage(ChatColor.GREEN + "Het parkour is succesvol gegenereerd!");
     }
 
     private void endGame() {
