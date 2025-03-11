@@ -54,7 +54,7 @@ public class Spleef extends JavaPlugin implements Listener {
         if (command.getName().equalsIgnoreCase("joinspleef")) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-
+                // hier krijg je een melding als het spel al is gestart
                 if (gameRunning) {
                     player.sendMessage(ChatColor.RED + "Het Spleef-spel is al gestart. Je kunt niet meer meedoen.");
                 } else {
