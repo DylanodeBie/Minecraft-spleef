@@ -25,8 +25,8 @@ import java.util.List;
 
 public class Spleef extends JavaPlugin implements Listener {
 
+    private final List<Location> originalBlocks = new ArrayList<>();
     private List<Player> spleefPlayers = new ArrayList<>(); // Lijst van spelers in de spleef match
-    private List<Location> originalBlocks = new ArrayList<>();
     private boolean gameRunning = false; // Boolean om bij te houden of het spel al loopt
     private Scorboard scoreboard; // Scoreboard-object
     private BossBar queueBossBar; // BossBar voor de queue
@@ -55,11 +55,10 @@ public class Spleef extends JavaPlugin implements Listener {
         if (command.getName().equalsIgnoreCase("joinspleef")) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                // hier krijg je een melding als het spel al is gestart
+
                 if (gameRunning) {
                     player.sendMessage(ChatColor.RED + "Het Spleef-spel is al gestart. Je kunt niet meer meedoen.");
                 } else {
-                    // Voeg de speler toe aan de spleefPlayers-lijst als deze nog niet is toegevoegd
                     if (!spleefPlayers.contains(player)) {
                         spleefPlayers.add(player);
                         player.sendMessage(ChatColor.GREEN + "Je hebt je aangemeld voor het Spleef-spel!");
@@ -68,7 +67,6 @@ public class Spleef extends JavaPlugin implements Listener {
                         queueBossBar.addPlayer(player);
                         updateQueueBossBar();
                     } else {
-                        // hier krijg je een melding als je jezelf hebt aangemeld voor het spel
                         player.sendMessage(ChatColor.RED + "Je bent al aangemeld voor het Spleef-spel.");
                     }
                 }
@@ -79,12 +77,12 @@ public class Spleef extends JavaPlugin implements Listener {
         if (command.getName().equalsIgnoreCase("startspleef")) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                // hier kan je een melding verwachten als het spel al is gestart
+
                 if (gameRunning) {
                     player.sendMessage(ChatColor.RED + "Het Spleef-spel is al gestart!");
                     return true;
                 }
-                // je moet met minimaal 2 spelers zijn om het spel te starten
+
                 if (spleefPlayers.size() < 2) {
                     player.sendMessage(ChatColor.RED + "Er zijn niet genoeg spelers om het spel te starten! Minimaal 2 spelers zijn nodig.");
                 } else {
@@ -94,7 +92,7 @@ public class Spleef extends JavaPlugin implements Listener {
             return true;
         }
 
-        // hier kan je je game mode veranderen naar creativer en survival
+        // Add the new command for changing game modes
         if (command.getName().equalsIgnoreCase("gamemode")) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
@@ -140,7 +138,7 @@ public class Spleef extends JavaPlugin implements Listener {
         queueBossBar.setVisible(false); // Verberg de queueBossBar omdat het spel is begonnen
 
         // Define the starting location for the parkour
-        Location parkourStartLocation = new Location(Bukkit.getWorld("world"), -1288, 160, 700);
+        Location parkourStartLocation = new Location(Bukkit.getWorld("world"), -1288, 189, 700);
 
         // Teleporteer spelers naar de arena en stel hun inventaris in
         for (Player p : spleefPlayers) {
@@ -161,9 +159,8 @@ public class Spleef extends JavaPlugin implements Listener {
         }
 
         // Build the parkour structure at the defined starting location
-        resetArena(parkourStartLocation);
-        buildParkour(parkourStartLocation);
-        
+        resetArena();
+
         Bukkit.broadcastMessage(ChatColor.GOLD + "Spleef-spel gestart door " + player.getName() + "!");
     }
 
@@ -189,9 +186,15 @@ public class Spleef extends JavaPlugin implements Listener {
                 if (spleefPlayers.size() == 1) {
                     // Er is nog één winnaar
                     Player winner = spleefPlayers.get(0);
+
+                    // Voeg een punt toe aan het scoreboard
                     scoreboard.onSpleefWin(winner);
+
+                    // Lanceer vuurwerk en laat een titel zien
                     launchFireworks(winner);
                     sendEndGameTitle(winner);
+
+                    // Stop het spel
                     endGame();
                 } else if (spleefPlayers.isEmpty()) {
                     // Niemand heeft gewonnen
@@ -201,6 +204,7 @@ public class Spleef extends JavaPlugin implements Listener {
             }
         }
     }
+
 
     // Methode voor vuurwerk
     private void launchFireworks(Player player) {
@@ -219,42 +223,26 @@ public class Spleef extends JavaPlugin implements Listener {
         firework.detonate(); // Ontsteek het vuurwerk onmiddellijk
     }
 
-
-
-    private void resetArena(Location startLocation) {
-        World world = startLocation.getWorld();
-        if (world == null) return;
-
-        // Reset alle opgeslagen blokken naar sneeuw
-        for (Location loc : originalBlocks) {
-            world.getBlockAt(loc).setType(Material.SNOW_BLOCK);
-        }
-
-        Bukkit.broadcastMessage(ChatColor.AQUA + "De spleef arena is opnieuw opgebouwd!");
-    }
-
     private void buildParkour(Location startLocation) {
         World world = startLocation.getWorld();
         if (world == null) return;
 
-        // Reset arena eerst
-        resetArena(startLocation);
+        // **Reset de arena eerst**
+        resetArena();
+
+        originalBlocks.clear(); // **Maak de lijst leeg voordat je nieuwe blokken opslaat**
 
         int height = startLocation.getBlockY();
         int baseX = startLocation.getBlockX();
         int baseZ = startLocation.getBlockZ();
 
-        // Bouw de parkour opnieuw en sla bloklocaties op
         for (int i = 0; i < 3; i++) {
-            for (int y = 0; y < 3; y++) {
+            for (int y = 0; y < 1; y++) {
                 for (int x = -3; x <= 3; x++) {
                     for (int z = -3; z <= 3; z++) {
                         Location blockLocation = new Location(world, baseX + x, height + (i * 6) + y, baseZ + z);
                         world.getBlockAt(blockLocation).setType(Material.SNOW_BLOCK);
-                        // Sla de originele blokken op voor reset
-                        if (!originalBlocks.contains(blockLocation)) {
-                            originalBlocks.add(blockLocation);
-                        }
+                        originalBlocks.add(blockLocation); // **Sla nieuwe blokken op**
                     }
                 }
             }
@@ -262,6 +250,7 @@ public class Spleef extends JavaPlugin implements Listener {
 
         Bukkit.broadcastMessage(ChatColor.GREEN + "Het parkour is succesvol gegenereerd!");
     }
+
 
     private void endGame() {
         gameRunning = false;
@@ -275,6 +264,42 @@ public class Spleef extends JavaPlugin implements Listener {
 
         spleefPlayers.clear(); // Wis de spelerslijst
         queueBossBar.setVisible(false); // Verberg de BossBar als het spel is afgelopen
-        Bukkit.broadcastMessage(ChatColor.GOLD + "Het Spleef-spel is beëindigd."); // Bericht dat het spel is afgelopen
+        Bukkit.broadcastMessage(ChatColor.GOLD + "Het Spleef-spel is beëindigd.");
+
+        resetArena();
+    }
+
+    private void resetArena() {
+        Location defaultLocation = new Location(Bukkit.getWorld("world"), -1288, 176, 700);
+        resetArena(defaultLocation);
+    }
+
+
+    private void resetArena(Location startLocation) {
+        if (startLocation == null) {
+            startLocation = new Location(Bukkit.getWorld("world"), -1288, 176, 700); // Standaard locatie
+        }
+
+        World world = startLocation.getWorld();
+        if (world == null) return;
+
+        // **Stap 2: Bouw de arena opnieuw**
+        int height = startLocation.getBlockY();
+        int baseX = startLocation.getBlockX();
+        int baseZ = startLocation.getBlockZ();
+
+        for (int i = 0; i < 3; i++) { // Drie niveaus maken
+            for (int y = 0; y < 1; y++) {
+                for (int x = -3; x <= 3; x++) {
+                    for (int z = -3; z <= 3; z++) {
+                        Location blockLocation = new Location(world, baseX + x, height + (i * 6) + y, baseZ + z);
+                        world.getBlockAt(blockLocation).setType(Material.SNOW_BLOCK);
+                        //originalBlocks.add(blockLocation); // **Nieuwe blokken opslaan**
+                    }
+                }
+            }
+        }
+
+        Bukkit.broadcastMessage(ChatColor.AQUA + "De spleef arena is opnieuw opgebouwd!");
     }
 }
